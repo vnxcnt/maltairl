@@ -1,0 +1,15 @@
+#star-rating {
+  display: flex;
+  justify-content: flex-start; /* Links ausrichten */
+  gap: 10px; /* Abstand zwischen den Sternen */
+  width: 100%; /* Sicherstellen, dass der Container die gesamte Breite einnimmt */
+  padding-left: 20px; /* Etwas Abstand vom linken Rand */
+}
+
+.star {
+  width: 40px;  /* Größe der Sterne */
+  height: 40px; /* Größe der Sterne */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-block; /* Um sicherzustellen, dass die Sterne nebeneinander bleiben */
+}
