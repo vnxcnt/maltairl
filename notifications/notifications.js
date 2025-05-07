@@ -11,6 +11,7 @@ const typeColors = {
   raid: '#00BCD4',
   inventory: '#00E676',
   inventoryToggle: '#8BC34A',
+  wantedLevel: '#F44336',
   default: '#FFFFFF'
 };
 
@@ -23,6 +24,7 @@ const sounds = {
   raid:       'https://cdn.jsdelivr.net/gh/vnxcnt/maltairl/sound/notification_default.mp3',
   inventory:  'https://cdn.jsdelivr.net/gh/vnxcnt/maltairl/sound/notification_default.mp3',
   inventoryToggle: 'https://cdn.jsdelivr.net/gh/vnxcnt/maltairl/sound/notification_default.mp3',
+  wantedLevel: 'https://cdn.jsdelivr.net/gh/vnxcnt/maltairl/sound/notification_default.mp3',
   default:    'https://cdn.jsdelivr.net/gh/vnxcnt/maltairl/sound/notification_default.mp3'
 };
 
@@ -72,8 +74,6 @@ function addNotification(type, title, message) {
   `;
 
   container.appendChild(div);
-  console.log('📤 Notification gerendert:', div.outerHTML);
-  console.log('📦 Container-Kinder:', container.children.length);
   if (!container) {
     console.warn('❌ Kein notification-container gefunden!');
   }
@@ -107,12 +107,41 @@ async function checkInventoryToggle() {
       previousInventoryOpen = isOpen;
       addNotification(
         'inventoryToggle',
-        `🎒 Inventar ${isOpen ? 'geöffnet' : 'geschlossen'}`,
+        `Inventar ${isOpen ? 'geöffnet' : 'geschlossen'}`,
         isOpen ? 'Du schaust jetzt in deine Tasche.' : 'Inventar wurde geschlossen.'
       );
     }
   } catch (e) {
     console.warn('❌ Fehler beim Prüfen des Inventory-Zustands:', e);
+  }
+}
+
+let previousWantedLevel = null;
+
+async function checkWantedLevel() {
+  try {
+    const starsStatus = await SE_API.counters.get('Stars');
+    if (typeof starsStatus?.count !== 'number') return;
+
+    const currentLevel = starsStatus.count;
+    if (previousWantedLevel === null) {
+      previousWantedLevel = currentLevel;
+      return;
+    }
+
+    if (currentLevel !== previousWantedLevel) {
+      const change = currentLevel > previousWantedLevel ? 'erhöht' : 'verringert';
+
+      addNotification(
+        'wantedLevel',
+        `Challange Level ${change}`,
+        `Aktuell: ${currentLevel} ${currentLevel === 1 ? 'Stern' : 'Sterne'}`
+      );
+
+      previousWantedLevel = currentLevel;
+    }
+  } catch (e) {
+    console.warn('❌ Fehler beim Prüfen des Wanted-Levels:', e);
   }
 }
 
@@ -142,7 +171,7 @@ async function checkInventoryUpdates() {
 
         addNotification(
           'inventory',
-          `📦 ${itemName} ${action === 'added' ? 'hinzugefügt' : 'entfernt'}`,
+          `${itemName} ${action === 'added' ? 'hinzugefügt' : 'entfernt'}`,
           `${action === 'added' ? '+' : '-'}${diff}`
         );
 
@@ -178,6 +207,7 @@ window.addEventListener('onWidgetLoad', async function (obj) {
   setInterval(() => {
     checkInventoryUpdates();
     checkInventoryToggle();
+    checkWantedLevel();
 }, 5000);
 });
 
