@@ -1,4 +1,4 @@
-const container = document.getElementById('notification-container');
+
 const maxVisible = 4;
 const duration = 10000; // in Millisekunden (10 Sekunden)
 
@@ -9,6 +9,8 @@ const typeColors = {
   donation: '#FF5722',
   cheer: '#9C27B0',
   raid: '#00BCD4',
+  inventory: '#00E676',
+  inventoryToggle: '#8BC34A',
   default: '#FFFFFF'
 };
 
@@ -19,10 +21,20 @@ const sounds = {
   donation:   'https://cdn.jsdelivr.net/gh/vnxcnt/maltairl/sound/notification_default.mp3',
   cheer:      'https://cdn.jsdelivr.net/gh/vnxcnt/maltairl/sound/notification_default.mp3',
   raid:       'https://cdn.jsdelivr.net/gh/vnxcnt/maltairl/sound/notification_default.mp3',
+  inventory:  'https://cdn.jsdelivr.net/gh/vnxcnt/maltairl/sound/notification_default.mp3',
+  inventoryToggle: 'https://cdn.jsdelivr.net/gh/vnxcnt/maltairl/sound/notification_default.mp3',
   default:    'https://cdn.jsdelivr.net/gh/vnxcnt/maltairl/sound/notification_default.mp3'
 };
 
-// ✅ DOM-basiertes Audio für Kompatibilität mit StreamElements
+const customInventoryItems = [
+  "Wasserflasche",
+  "Cola",
+  "Boxhandschuhe",
+  "Equipment",
+  "Rucksack",
+  "iPhone"
+];
+
 function playSound(type) {
   console.log('🔊 playSound triggered for:', type);
   const audioUrl = sounds[type] || sounds.default;
@@ -43,6 +55,12 @@ function playSound(type) {
 }
 
 function addNotification(type, title, message) {
+  const container = document.getElementById('notification-container');
+  if (!container) {
+    console.warn('❌ Kein notification-container im DOM gefunden.');
+    return;
+  }
+  console.log('📢 Notification aufgerufen für:', { type, title, message });
   const color = typeColors[type] || typeColors.default;
 
   const div = document.createElement('div');
@@ -54,6 +72,11 @@ function addNotification(type, title, message) {
   `;
 
   container.appendChild(div);
+  console.log('📤 Notification gerendert:', div.outerHTML);
+  console.log('📦 Container-Kinder:', container.children.length);
+  if (!container) {
+    console.warn('❌ Kein notification-container gefunden!');
+  }
 
   if (container.children.length > maxVisible) {
     container.removeChild(container.children[0]);
@@ -65,6 +88,98 @@ function addNotification(type, title, message) {
 
   playSound(type);
 }
+
+let previousInventoryCounts = {};
+let previousInventoryOpen = null;
+
+async function checkInventoryToggle() {
+  try {
+    const inventoryStatus = await SE_API.counters.get('Inventory');
+    if (typeof inventoryStatus?.count !== 'number') return;
+
+    const isOpen = inventoryStatus.count > 0;
+    if (previousInventoryOpen === null) {
+      previousInventoryOpen = isOpen;
+      return;
+    }
+
+    if (isOpen !== previousInventoryOpen) {
+      previousInventoryOpen = isOpen;
+      addNotification(
+        'inventoryToggle',
+        `🎒 Inventar ${isOpen ? 'geöffnet' : 'geschlossen'}`,
+        isOpen ? 'Du schaust jetzt in deine Tasche.' : 'Inventar wurde geschlossen.'
+      );
+    }
+  } catch (e) {
+    console.warn('❌ Fehler beim Prüfen des Inventory-Zustands:', e);
+  }
+}
+
+async function checkInventoryUpdates() {
+  for (const itemName of customInventoryItems) {
+    try {
+      const counter = await SE_API.counters.get(itemName);
+            if (typeof counter?.count !== 'number') {
+        console.warn(`⚠️ Ungültiger Wert für '${itemName}':`, counter);
+        continue;
+      }
+
+      const newCount = parseInt(counter.count);
+
+      if (!(itemName in previousInventoryCounts)) {
+        previousInventoryCounts[itemName] = newCount;
+        await SE_API.store.set(itemName, { value: newCount });
+
+        continue;
+      }
+
+      const oldCount = previousInventoryCounts[itemName];
+
+      if (newCount !== oldCount) {
+        const action = newCount > oldCount ? 'added' : 'removed';
+        const diff = Math.abs(newCount - oldCount);
+
+        addNotification(
+          'inventory',
+          `📦 ${itemName} ${action === 'added' ? 'hinzugefügt' : 'entfernt'}`,
+          `${action === 'added' ? '+' : '-'}${diff}`
+        );
+
+        previousInventoryCounts[itemName] = newCount;
+      }
+    } catch (e) {
+      console.warn(`❌ Fehler beim Verarbeiten von '${itemName}':`, e);
+    }
+  }
+
+  }
+
+window.addEventListener('onWidgetLoad', async function (obj) {
+  const data = obj.detail;
+  
+  // 🟡 Initiale Counter-Stände speichern und anzeigen
+  for (const itemName of customInventoryItems) {
+    try {
+      const counter = await SE_API.counters.get(itemName);
+      if (typeof counter?.value !== 'number') {
+        console.warn(`⚠️ Ungültiger Startwert für '${itemName}':`, counter);
+        continue;
+      }
+
+      const initialValue = parseInt(counter.value);
+      previousInventoryCounts[itemName] = initialValue;
+      await SE_API.store.set(itemName, { value: initialValue });
+          } catch (e) {
+      console.warn(`❌ Fehler beim Initialisieren von '${itemName}':`, e);
+    }
+  }
+
+  setInterval(() => {
+    checkInventoryUpdates();
+    checkInventoryToggle();
+}, 5000);
+});
 
 window.addEventListener('onEventReceived', function (obj) {
   const listener = obj.detail.listener;
@@ -89,5 +204,6 @@ window.addEventListener('onEventReceived', function (obj) {
     case 'raid-latest':
       addNotification('raid', `Raid von ${data.name}`, `${data.amount} Malteser schauen vorbei!`);
       break;
+
   }
 });
