@@ -1,33 +1,34 @@
-// Funktion zum Abrufen des Counters und Aktualisieren der Sterne
-function updateStars() {
+window.addEventListener('onWidgetLoad', function () {
   SE_API.counters.get('Stars').then(counter => {
-    const stars = counter.count;
-    setStars(stars);
+    if (typeof counter?.count === 'number') {
+      setStars(counter.count);
+    }
   }).catch(error => {
-    console.error('Fehler beim Abrufen des Counters:', error);
+    console.warn('❌ Fehler beim Laden des Star-Counters:', error);
   });
-}
+});
 
-// Funktion zum Setzen der Sterne basierend auf dem Wert des Counters
 function setStars(level) {
   const stars = document.querySelectorAll('.star');
 
   stars.forEach(star => {
     const starLevel = parseInt(star.getAttribute('data-level'));
-
     if (starLevel <= level) {
-      // Zeige einen "gefüllten" Stern an
-      star.src = 'https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/star.png'; // gefüllter Stern
-      star.style.display = 'inline'; // Stelle sicher, dass der Stern sichtbar ist
+      star.src = 'https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/star.png';
+      star.style.display = 'inline';
     } else {
-      // Wenn der Stern leer ist, verstecke ihn
-      star.style.display = 'none'; // Der leere Stern wird nicht angezeigt
+      star.style.display = 'none';
     }
   });
 }
 
-// Initiale Ausführung
-updateStars();
+// Reagiere auf WantedLevel per Event
+window.addEventListener('onEventReceived', function (obj) {
+  const listener = obj.detail.listener;
+  const data = obj.detail.event;
 
-// Alle 5 Sekunden den Stand des Counters abrufen und die Sterne aktualisieren
-setInterval(updateStars, 5000);
+  if (listener === 'bot:counter' && data.counter?.toLowerCase() === 'stars') {
+    const value = parseInt(data.value);
+    setStars(value);
+  }
+});
