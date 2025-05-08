@@ -5,14 +5,16 @@
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
-    transform: translate(-50%, -50%) !important;
+    transform: translate(-50%, -50%);
     width: 350px !important;
     height: 717px !important;
     padding-left: -15px !important;
     padding-right: -15px !important;
     border-radius: 60px !important;  /* Optional, um das Handy etwas abzurunden */
-    overflow: hidden !important; /* Verhindert, dass das Bild über den Container hinausragt */
-    position: relative !important;  /* Für die Positionierung der inneren Layer */
+    overflow: hidden !important;     /* Verhindert, dass das Bild über den Container hinausragt */
+    position: relative !important;   /* Für die Positionierung der inneren Layer */
+    transition: transform 0.4s ease, opacity 0.4s ease; /* Animation für Ein-/Ausfahren */
+    opacity: 1; /* Startzustand sichtbar */
 }
 
 /* Hintergrundbild */
@@ -37,7 +39,7 @@
     height: 100%;
     background: url('https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/phone_02.png') no-repeat center center;
     background-size: 100% auto;  /* Bild wird proportional skaliert */
-    z-index: 2;  /* iPhone-Mockup hat einen höheren z-index und ist daher oben */
+    z-index: 20000;  /* iPhone-Mockup hat einen höheren z-index und ist daher oben */
 }
 
 /* Der Bildschirm des Handys */
@@ -125,6 +127,44 @@
     will-change: transform, opacity;
 }
 
+.chat-popup {
+  position: absolute;
+  top: 50px;
+  left: 0%;
+  width: 90%;
+  background: rgba(50, 50, 50, 0.9);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-family: 'SF Pro Display', sans-serif;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: all 0.4s ease;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+.chat-badge {
+  height: 16px;
+  width: 16px;
+  margin-right: 4px;
+  vertical-align: middle;
+  border-radius: 3px;
+}
+
+.chat-popup.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chat-popup .sender {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 2px;
+}
+
 /* Styling für den Benutzernamen in einer Zeile */
 .notification-content {
     display: flex;
@@ -183,16 +223,39 @@
     background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
+.weather-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100%;
+  font-family: 'SF Pro Display', sans-serif;
+  color: white;
+}
+
+.weather-line {
+  font-size: 14px;
+  margin: 2px 0;
+}
+
+.weather-line.city {
+  font-weight: 300;
+  font-size: 20px;
+}
+
+.weather-line.temp {
+  font-size: 30px;
+  font-weight: 300;
+}
+
+.weather-line.icon {
+  font-size: 35px;
+}
+
 .black-widget {
     background-color: #111;
 }
 
-.widget-title {
-    font-weight: 600;
-    font-size: 13px;
-    opacity: 0.85;
-    margin-bottom: 4px;
-}
 
 @keyframes slideIn {
     from {
@@ -220,4 +283,24 @@
     margin-bottom: 5px;  /* Fügt Abstand zu den anderen Elementen hinzu */
     border-radius: 5px;  /* Abrundung der Ecken */
     color: white;        /* Setzt die Textfarbe auf weiß */
+}
+
+/* @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ Zustand des Phones @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ */
+/* Zustand: ganz ausgeblendet */
+.phone-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 120%);
+}
+
+/* Zustand: eingeklappt unten (nur obere 20 % sichtbar) */
+.phone-minimized {
+  opacity: 1;
+  transform: translate(-50%, 40%);
+}
+
+/* Zustand: voll sichtbar */
+.phone-full {
+  opacity: 1;
+  transform: translate(-50%, -50%);
 }
