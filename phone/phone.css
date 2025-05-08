@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap');
+
 /* Container für das Handy */
 .phone-container {
     position: absolute !important;
@@ -18,8 +20,9 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 97%;
     height: 100%;
+    margin-left: 5px;
     background: url('https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/phone_background01.png') no-repeat center center;
     background-size: cover;  /* Bild wird so skaliert, dass es den gesamten Container abdeckt */
     z-index: 1;  /* Hintergrundbild hat den niedrigeren z-index */
@@ -60,7 +63,7 @@
     padding: 5px;
     font-size: 14px;
     color: white;
-    font-family: Arial, sans-serif; /* Optional, um den Text wie auf einem iPhone aussehen zu lassen */
+    font-family: 'SF Pro Display', sans-serif; /* Optional, um den Text wie auf einem iPhone aussehen zu lassen */
     z-index: 4; /* Statusbar bekommt den höchsten z-index */
 }
 
@@ -74,20 +77,31 @@
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
-    max-width: 300px;
+    height: 60%;
+    padding: 12px;
+    background-color: rgba(60, 60, 60, 0.8);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     z-index: 9999;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    max-height: 80%; /* Verhindert, dass der Container zu hoch wird */
-    overflow-y: auto; /* Ermöglicht das Scrollen, wenn die Events den Container überschreiten */
+    justify-content: flex-start;
+    gap: 4px;
+    overflow-y: auto;
+
+    /* Scrollbar ausblenden */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#notification-container::-webkit-scrollbar {
+    display: none;
 }
 
 /* Container für den Inhalt */
 .content {
     text-align: left;
     width: 100%; /* Breite nimmt den gesamten verfügbaren Platz ein */
-    background-color: #000;
     border-radius: 6px;
 }
 
@@ -95,14 +109,20 @@
 .notification {
     background-color: rgba(0, 0, 0, 0.8); /* Dunkelgrau mit Transparenz */
     color: white;
-    margin: 10px 0;
-    padding: 4px;
+    padding: 6px 10px;
     border-radius: 5px;
     font-size: 16px;
     display: flex;
-    justify-content: space-between; /* Elemente nebeneinander anzeigen */
-    align-items: center; /* Vertikale Ausrichtung der Elemente */
-    transition: opacity 0.5s ease;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'SF Pro Display', sans-serif;
+
+    /* ✨ Animation beim Hinzufügen */
+    animation: slideIn 0.3s ease-out;
+
+    /* ✨ Sanfte Verschiebung bei Positionänderung */
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    will-change: transform, opacity;
 }
 
 /* Styling für den Benutzernamen in einer Zeile */
@@ -111,6 +131,7 @@
     flex-direction: column;
     justify-content: left;
     width: 100%;
+    font-family: 'SF Pro Display', sans-serif;
 }
 
 /* Benutzername */
@@ -131,9 +152,51 @@
     animation: slideIn 0.5s ease-out;
 }
 
+.widget-row {
+    position: absolute;
+    top: calc(85px + 60% + 12px); /* 50px vom oberen Rand + 50% Höhe der Notifications + etwas Abstand */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    z-index: 10;
+}
+.widget {
+    flex: 1;
+    aspect-ratio: 1 / 1; /* Quadratisch! */
+    border-radius: 18px;
+    padding: 10px 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: white;
+    font-family: 'SF Pro Display', sans-serif;
+    font-size: 14px;
+    overflow: hidden;
+}
+
+.weather-widget {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.black-widget {
+    background-color: #111;
+}
+
+.widget-title {
+    font-weight: 600;
+    font-size: 13px;
+    opacity: 0.85;
+    margin-bottom: 4px;
+}
+
 @keyframes slideIn {
     from {
-        transform: translateY(20px);
+        transform: translateY(-10px);
         opacity: 0;
     }
     to {
