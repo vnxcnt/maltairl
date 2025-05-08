@@ -253,9 +253,40 @@
 }
 
 .black-widget {
-    background-color: #111;
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  padding: 10px;
 }
 
+.widget-title {
+  font-size: 16px;
+  text-align: center;
+  font-weight: bold;
+  color: white;
+  padding-bottom: 6px;
+  border-bottom: 1px solid white;
+  margin-bottom: 10px;
+}
+.social-stat {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  margin: 4px 0;
+  color: white;
+  gap: 6px;
+  justify-content: flex-start;
+}
+
+.social-stat i {
+  width: 16px;
+  text-align: center;
+  color: #aaa;
+}
+
+.social-stat .label {
+  font-weight: 500;
+  margin-right: 4px;
+}
 
 @keyframes slideIn {
     from {
@@ -296,7 +327,7 @@
 /* Zustand: eingeklappt unten (nur obere 20 % sichtbar) */
 .phone-minimized {
   opacity: 1;
-  transform: translate(-50%, 40%);
+  transform: translate(-50%, 42.5%);
 }
 
 /* Zustand: voll sichtbar */
