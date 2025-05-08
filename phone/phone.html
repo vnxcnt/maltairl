@@ -1,25 +1,32 @@
-<div class="phone-container">
-    <div class="background-layer"></div> <!-- Hintergrundbild -->
+<div class="phone-container" id="phone">
+    <div class="background-layer" id="phone-background"></div> <!-- Hintergrundbild -->
     <div class="phone-layer"></div> <!-- iPhone-Mockup-Bild -->
     <div class="screen">
         <div class="status-bar">
             <span id="current-time">12:45</span> <!-- Platzhalter für Uhrzeit -->
         </div>
         <div class="content">
+          <div id="chat-popup" class="chat-popup hidden"></div>
              <!-- Dynamische Events werden hier angezeigt -->
             <div id="notification-container">
                 <!-- Benachrichtigungen werden hier angezeigt -->
             </div> <!-- Container für Events -->
 <div class="widget-row">
-  <div class="widget weather-widget">
-    <div class="widget-title">Wetter</div>
-    <!-- Später Wetterinhalt -->
+<div class="widget weather-widget">
+  <div class="widget-title"></div>
+  <div id="weather-info" class="weather-info">
+    <div id="weather-city" class="weather-line city">–</div>
+    <div id="weather-temp" class="weather-line temp">–</div>
+    <div id="weather-icon" class="weather-line icon">–</div>
   </div>
+</div>
   <div class="widget black-widget">
-    <div class="widget-title">Widget</div>
+    <div class="widget-title">Social Media</div>
     <!-- Späterer Inhalt -->
   </div>
 </div>
         </div>
     </div>
 </div>
+
+<audio id="phone-sound" src="https://cdn.jsdelivr.net/gh/vnxcnt/maltairl/sound/notification_pop.mp3" preload="auto"></audio>
