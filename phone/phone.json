@@ -2,12 +2,12 @@
   "weatherApiKey": {
     "type": "text",
     "label": "OpenWeather API Key",
-    "value": "419e2dea186f1611ac0b9e196047256f"
+    "value": "<PULL_KEY>"
   },
   "RTIRLApiKey": {
     "type": "text",
     "label": "RTIRL API Key",
-    "value": "2v73gk40qeham29k"
+    "value": "<PULL_KEY>"
   },
   "weatherCity": {
     "type": "text",
