@@ -68,4 +68,4 @@ setTimeout(() => {
 // ⏱ Alle 5 Minuten automatisch neue Nachricht anzeigen
 setInterval(() => {
   showInfoBanner(getRandomInfoMessage(), 12000, "#2196F3");
-}, 500000);
+}, 1000000);
