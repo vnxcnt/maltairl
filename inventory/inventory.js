@@ -6,6 +6,7 @@ function getItemIcon(name) {
     iPhone: "https://raw.githubusercontent.com/bitc0de/fivem-items-gallery/refs/heads/main/images/tech/iphone.png",
     Boxhandschuhe: "https://raw.githubusercontent.com/bitc0de/fivem-items-gallery/refs/heads/main/images/clothing/gloves.png",
     Rucksack: "https://raw.githubusercontent.com/bitc0de/fivem-items-gallery/refs/heads/main/images/misc/backpack1.png",
+    Bilal: "https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/bilal.png",
     Equipment: "https://raw.githubusercontent.com/bitc0de/fivem-items-gallery/refs/heads/main/images/tech/powerbank.png"
   };
   return iconMap[name] || "https://cdn-icons-png.flaticon.com/512/1040/1040230.png";
@@ -43,57 +44,33 @@ const customInventoryItems = [
   "Boxhandschuhe",
   "Equipment",
   "Rucksack",
+  "Bilal",
   "iPhone"
 ];
 
-async function loadInventoryFromCounters() {
-  const loader = document.getElementById('inventory-loader');
-  if (loader) loader.style.display = 'block';
-  const items = [];
+const inventoryState = {};
+let inventoryVisible = false;
 
-  for (const itemName of customInventoryItems) {
-    try {
-      const counter = await SE_API.counters.get(itemName);
-      const count = parseInt(counter?.count);
-      if (count > 0) {
-        items.push({ icon: getItemIcon(itemName), count });
-      }
-    } catch (e) {
-      console.warn(`Item '${itemName}' konnte nicht geladen werden:`, e);
-    }
-  }
-
-  renderInventory(items);
-  if (loader) loader.style.display = 'none';
-}
-
-// 👇 Zeigt oder versteckt das Overlay abhängig vom 'Inventory'-Counterwert
-async function updateInventoryDisplay(playSoundOnShow = true) {
+function updateInventoryDisplay(force = false) {
   const overlay = document.getElementById('inventory-overlay');
   if (!overlay) return;
 
-  try {
-    const invCounter = await SE_API.counters.get('Inventory');
-    const value = parseInt(invCounter?.count);
-    const isCurrentlyVisible = overlay.classList.contains('visible');
-
-    if (value > 0) {
-      if (!isCurrentlyVisible && playSoundOnShow) {
-        playInventorySound();
-      }
+  if (inventoryVisible) {
+    if (!overlay.classList.contains('visible')) {
       overlay.classList.add('visible');
-    } else {
-      overlay.classList.remove('visible');
+      if (force) playInventorySound();
     }
-  } catch (e) {
-    console.warn('Inventory-Counter konnte nicht geladen werden:', e);
+  } else {
     overlay.classList.remove('visible');
   }
 
-  loadInventoryFromCounters();
+  const itemList = Object.entries(inventoryState).map(([name, count]) => ({
+    icon: getItemIcon(name),
+    count
+  }));
+  renderInventory(itemList);
 }
 
-// 🔊 Sound beim Anzeigen des Inventars
 function playInventorySound() {
   const audio = document.createElement('audio');
   audio.src = 'https://cdn.jsdelivr.net/gh/vnxcnt/maltairl/sound/inventory_zip.mp3';
@@ -104,10 +81,47 @@ function playInventorySound() {
   audio.addEventListener('ended', () => audio.remove());
 }
 
-// 🚀 Automatisch beim Laden starten
-window.addEventListener('onWidgetLoad', () => {
-  updateInventoryDisplay();
-  setInterval(() => {
-    updateInventoryDisplay(false);
-  }, 7000);
+// 📢 Reagiere auf Event-basierte Inventory-Updates
+window.addEventListener('onEventReceived', (obj) => {
+  const listener = obj.detail.listener;
+  const data = obj.detail.event;
+
+  if (listener === 'bot:counter') {
+    const counterName = data.counter;
+    const value = parseInt(data.value);
+    const normalized = counterName.toLowerCase();
+
+    if (customInventoryItems.map(i => i.toLowerCase()).includes(normalized)) {
+      inventoryState[counterName] = value;
+      updateInventoryDisplay();
+    }
+
+    if (normalized === 'inventory') {
+      inventoryVisible = value > 0;
+      updateInventoryDisplay(true);
+    }
+  }
+});
+
+// 🚀 Initiale Abfrage bei Widget-Start
+window.addEventListener('onWidgetLoad', async () => {
+  for (const itemName of customInventoryItems) {
+    try {
+      const counter = await SE_API.counters.get(itemName);
+      const count = parseInt(counter?.count);
+      inventoryState[itemName] = isNaN(count) ? 0 : count;
+    } catch (e) {
+      console.warn(`Fehler beim Abrufen von '${itemName}':`, e);
+      inventoryState[itemName] = 0;
+    }
+  }
+
+  try {
+    const inv = await SE_API.counters.get('Inventory');
+    inventoryVisible = parseInt(inv?.count) > 0;
+  } catch (e) {
+    inventoryVisible = false;
+  }
+
+  updateInventoryDisplay(true);
 });
