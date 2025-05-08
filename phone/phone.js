@@ -46,6 +46,58 @@ window.addEventListener('onWidgetLoad', async function (obj) {
   } catch (e) {
     console.warn('❌ Fehler beim Abrufen von PhoneBackground:', e);
   }
+
+  // 📞 Phone-Counter initial abrufen
+  try {
+    const phoneCounter = await SE_API.counters.get('Phone');
+    const phoneValue = parseInt(phoneCounter?.count);
+    const phone = document.getElementById('phone');
+
+    if (phone && !isNaN(phoneValue)) {
+      phone.classList.remove('phone-hidden', 'phone-minimized', 'phone-full');
+      switch (phoneValue) {
+        case 0:
+          phone.classList.add('phone-hidden');
+          break;
+        case 1:
+          phone.classList.add('phone-minimized');
+          break;
+        case 2:
+          phone.classList.add('phone-full');
+          break;
+        default:
+          console.warn('❓ Unbekannter Phone-Zustand beim Start:', phoneValue);
+      }
+    }
+  } catch (e) {
+    console.warn('❌ Fehler beim Abrufen des Phone-Counters:', e);
+  }
+
+  // 👥 Social Stats initial setzen
+  try {
+    const sessionData = obj.detail.session?.data || {};
+
+    const followerEl = document.getElementById('latest-follower');
+    if (followerEl) {
+      followerEl.innerText = sessionData["follower-latest"]?.name || '–';
+    }
+
+    const subEl = document.getElementById('latest-sub');
+    if (subEl) {
+      subEl.innerText = sessionData["subscriber-latest"]?.name || '–';
+    }
+
+    const tipEl = document.getElementById('latest-donator');
+    if (tipEl) {
+      const tipName = sessionData["tip-latest"]?.name || '–';
+      const tipAmount = sessionData["tip-latest"]?.amount
+        ? parseFloat(sessionData["tip-latest"].amount).toFixed(2) + '€'
+        : '';
+      tipEl.innerText = `${tipName} ${tipAmount}`;
+    }
+  } catch (e) {
+    console.warn('❌ Fehler beim Initialisieren der Social Stats:', e);
+  }
 });
 
 function fetchWeather(apiKey, city, unit) {
@@ -174,7 +226,7 @@ window.addEventListener('onEventReceived', function (obj) {
   // Log zum Debuggen
   console.log('📩 Event empfangen:', listener, data);
 
-  // Reagiere zuerst auf den Phone-Counter separat
+  // 📱 Phone Sichtbarkeit per Counter
   if (listener === 'bot:counter' && data.counter === 'Phone') {
     console.log('📲 Phone-Counter Event empfangen:', data.value);
     const phone = document.getElementById('phone');
@@ -188,50 +240,63 @@ window.addEventListener('onEventReceived', function (obj) {
       }
 
       switch (parseInt(data.value)) {
-        case 0:
-          phone.classList.add('phone-hidden');
-          break;
-        case 1:
-          phone.classList.add('phone-minimized');
-          break;
-        case 2:
-          phone.classList.add('phone-full');
-          break;
-        default:
-          console.warn('❓ Unbekannter Phone-Zustand:', data.value);
+        case 0: phone.classList.add('phone-hidden'); break;
+        case 1: phone.classList.add('phone-minimized'); break;
+        case 2: phone.classList.add('phone-full'); break;
+        default: console.warn('❓ Unbekannter Phone-Zustand:', data.value);
       }
     }
-    return; // ⛔ Nicht weiter verarbeiten
+    return;
   }
 
+  // 🎨 Hintergrundwechsel per Counter
   if (listener === 'bot:counter' && data.counter === 'PhoneBackground') {
-  const value = parseInt(data.value);
-  if (!isNaN(value)) {
-    setPhoneBackground(value);
-  }
-}
-
-if (listener === 'message') {
-  const messageData = data.data;
-
-  // Twitch & YouTube unterscheiden
-  let platform = data?.platform || 'twitch';
-  let sender = '', message = '';
-  let badges = messageData.badges || [];
-
-  if (platform === 'twitch') {
-    sender = messageData.displayName || messageData.nick;
-    message = messageData.text;
-  } else if (platform === 'youtube') {
-    sender = messageData.displayName || messageData.nick;
-    message = messageData.text || messageData.snippet?.textMessageDetails?.messageText || '';
+    const value = parseInt(data.value);
+    if (!isNaN(value)) {
+      setPhoneBackground(value); // Funktion muss separat definiert sein
+    }
   }
 
-  showChatPopup(sender, message, badges);
-  return;
-}
+  // 💬 Chatnachricht anzeigen
+  if (listener === 'message') {
+    const messageData = data.data;
+    let platform = data?.platform || 'twitch';
+    let sender = '', message = '';
+    let badges = messageData.badges || [];
 
-  // Alle anderen Events, die einen Namen brauchen
+    if (platform === 'twitch') {
+      sender = messageData.displayName || messageData.nick;
+      message = messageData.text;
+    } else if (platform === 'youtube') {
+      sender = messageData.displayName || messageData.nick;
+      message = messageData.text || messageData.snippet?.textMessageDetails?.messageText || '';
+    }
+
+    showChatPopup(sender, message, badges); // Funktion muss separat definiert sein
+    return;
+  }
+
+  // 🧍‍♂️ Follower → Social Stats Widget
+  if (listener === 'follower-latest') {
+    const el = document.getElementById('latest-follower');
+    if (el) el.innerText = data.name || '–';
+  }
+
+  // 🌟 Subscriber → Social Stats Widget
+  if (listener === 'subscriber-latest') {
+    const el = document.getElementById('latest-sub');
+    if (el) el.innerText = data.name || '–';
+  }
+
+  // 💸 Donator → Social Stats Widget
+  if (listener === 'tip-latest') {
+    const name = data.name || '–';
+    const amount = data.amount ? parseFloat(data.amount).toFixed(2) + '€' : '';
+    const el = document.getElementById('latest-donator');
+    if (el) el.innerText = `${name} ${amount}`;
+  }
+
+  // 🔔 Andere Notification-Typen mit Namen
   if (!data || !data.name) return;
 
   let title = '', message = '', type = '';
@@ -247,8 +312,8 @@ if (listener === 'message') {
       type = isSub ? 'subscriber' : 'follow';
       title = nameHTML;
       message = isSub
-        ? `hat dich auf ${platform === 'youtube' ? 'YouTube' : 'Twitch'} abonniert!`
-        : `folgt dir jetzt auf ${platform === 'youtube' ? 'YouTube' : 'Twitch'}!`;
+        ? `hat auf ${platform === 'youtube' ? 'YouTube' : 'Twitch'} abonniert!`
+        : `folgt auf ${platform === 'youtube' ? 'YouTube' : 'Twitch'}!`;
       break;
 
     case 'tip-latest':
@@ -277,7 +342,6 @@ if (listener === 'message') {
 
   addNotification(type, title, message);
 });
-
 
 function capitalizeFirst(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
