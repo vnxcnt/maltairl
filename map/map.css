@@ -1,0 +1,92 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#minimap-container {
+  width: 300px;
+  position: absolute;
+  right: 0; /* am rechten Rand anpinnen */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  transform: translateX(-100%); /* Start: links außerhalb vom Bildschirm */
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#minimap-container.visible {
+  transform: translateX(0); /* reinsliden von links */
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+#map {
+  width: 450px;
+  height: 275px;
+  overflow: hidden;
+  margin: 0 auto;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+}
+.gta-dot {
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  transform: translate(-50%, -50%);
+}
+
+.leaflet-control-attribution,
+.leaflet-control-container {
+  display: none !important;
+}
+
+#minimap-container {
+  width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#map {
+  width: 450px;
+  height: 275px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+}
+
+#gta-bars-bg {
+  width: 450px;               /* volle Breite der Map */
+  height: 25px;               /* gewünschte Höhe */
+  background-color: #4a4e4e;  /* grauer Hintergrundblock */
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+/* Die farbigen Füllbalken */
+.bar {
+  height: 12px;
+}
+
+.bar.health {
+  width: 60%;
+  background-color: #5a9d58;
+}
+
+.bar.stamina {
+  width: 20%;
+  background-color: #39677e;
+}
+
+.bar.armor {
+  width: 20%;
+  background-color: #7b6936;
+}
