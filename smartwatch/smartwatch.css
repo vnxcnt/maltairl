@@ -1,0 +1,59 @@
+#apple-watch-container {
+  position: relative;
+  width: 300px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  opacity: 0;
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+
+#apple-watch-container.visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+#apple-watch-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 5;
+  pointer-events: none;
+}
+
+#watch-display {
+  position: absolute;
+  top: 20%;
+  left: 26%;
+  width: 48%;
+  height: 58%;
+  background: black;
+  border-radius: 20px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-family: 'SF Pro Display', sans-serif;
+  font-size: 16px;
+  text-align: center;
+}
+
+#watch-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 22px;
+  line-height: 1.4;
+}
+
+#watch-content i {
+  margin-right: 8px;
+  color: #00d1ff;
+  font-size: 24px;
+}
