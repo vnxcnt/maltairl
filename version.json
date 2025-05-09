@@ -1,7 +1,7 @@
-[
-  {
+{
+  "version": {
     "type": "text",
-    "name": "version",
+    "label": "Versionsnummer",
     "value": "v0.0.1"
   }
-]
+}
