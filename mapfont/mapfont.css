@@ -1,0 +1,25 @@
+#location-widget {
+  display: flex;
+  align-items: center;
+  font-family: 'Dancing Script', cursive;
+  font-size: 44px;
+  color: white;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: none;
+  max-width: 90%;
+  opacity: 0;
+  transition: opacity 1s ease;
+  pointer-events: none;
+}
+
+#location-widget.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#location-widget.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
