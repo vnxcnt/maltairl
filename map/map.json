@@ -1,0 +1,22 @@
+{
+  "mapbox_token": {
+    "type": "text",
+    "label": "Mapbox Access Token",
+    "value": "<API_KEY>"
+  },
+  "custom_style": {
+    "type": "text",
+    "label": "Mapbox Custom Style ID",
+    "value": "adoucett/cjf5k84bp0p7t2rmiwvwikhyn"
+  },
+  "fallback_style": {
+    "type": "text",
+    "label": "Mapbox Fallback Style ID",
+    "value": "mapbox/streets-v11"
+  },
+  "rtirl_api_url": {
+    "type": "text",
+    "label": "RTIRL Pull API URL",
+    "value": "<API_PULL_KEY>"
+  }
+}
