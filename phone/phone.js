@@ -73,6 +73,27 @@ window.addEventListener('onWidgetLoad', async function (obj) {
     console.warn('❌ Fehler beim Abrufen des Phone-Counters:', e);
   }
 
+  // 🔁 GPS-Pfeil per Counter initial sichtbar/unsichtbar setzen
+try {
+  const mapCounter = await SE_API.counters.get('Map');
+  const gpsIcon = document.getElementById('gps-icon');
+  if (gpsIcon) {
+    gpsIcon.style.display = mapCounter?.count > 0 ? 'inline-block' : 'none';
+  }
+} catch (e) {
+  console.warn('❌ Fehler beim Abrufen des Map-Counters für GPS:', e);
+}
+
+try {
+  const watchCounter = await SE_API.counters.get('Watch');
+  const bluetoothIcon = document.getElementById('bluetooth-icon');
+  if (bluetoothIcon) {
+    bluetoothIcon.style.display = watchCounter?.count === 1 ? 'inline-block' : 'none';
+  }
+} catch (e) {
+  console.warn('❌ Fehler beim Abrufen des Watch-Counters für Bluetooth:', e);
+}
+
   // 👥 Social Stats initial setzen
   try {
     const sessionData = obj.detail.session?.data || {};
@@ -138,15 +159,32 @@ function getWeatherIcon(condition) {
 // 🕒 Uhrzeit-Update
 function updateTime() {
   const timeElement = document.getElementById('current-time');
+  if (!timeElement) return;
+
   const now = new Date();
   let hours = now.getHours();
   let minutes = now.getMinutes();
   hours = hours < 10 ? '0' + hours : hours;
   minutes = minutes < 10 ? '0' + minutes : minutes;
   timeElement.innerText = `${hours}:${minutes}`;
+  console.log('⏰ Uhrzeit aktualisiert:', `${hours}:${minutes}`);
 }
-setInterval(updateTime, 60000);
-updateTime();
+
+function startClock() {
+  updateTime(); // sofort starten
+
+  const now = new Date();
+  const msUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+  console.log('⌛ Wartezeit bis zur nächsten Minute:', msUntilNextMinute, 'ms');
+
+  setTimeout(() => {
+    updateTime(); // exakter Start zur nächsten Minute
+    console.log('▶️ Starte Minutentakt...');
+    setInterval(updateTime, 60000); // dann alle 60 Sekunden
+  }, msUntilNextMinute);
+}
+
+startClock();
 
 const maxVisible = 8;
 const duration = 10000;
@@ -249,6 +287,13 @@ window.addEventListener('onEventReceived', function (obj) {
     return;
   }
 
+  if (listener === 'bot:counter' && data.counter === 'Map') {
+  const gpsIcon = document.getElementById('gps-icon');
+  if (gpsIcon) {
+    gpsIcon.style.display = data.value > 0 ? 'inline-block' : 'none';
+  }
+}
+
   // 🎨 Hintergrundwechsel per Counter
   if (listener === 'bot:counter' && data.counter === 'PhoneBackground') {
     const value = parseInt(data.value);
@@ -256,6 +301,13 @@ window.addEventListener('onEventReceived', function (obj) {
       setPhoneBackground(value); // Funktion muss separat definiert sein
     }
   }
+
+  if (listener === 'bot:counter' && data.counter === 'Watch') {
+  const bluetoothIcon = document.getElementById('bluetooth-icon');
+  if (bluetoothIcon) {
+    bluetoothIcon.style.display = data.value === 1 ? 'inline-block' : 'none';
+  }
+}
 
   // 💬 Chatnachricht anzeigen
   if (listener === 'message') {
@@ -266,13 +318,15 @@ window.addEventListener('onEventReceived', function (obj) {
 
     if (platform === 'twitch') {
       sender = messageData.displayName || messageData.nick;
-      message = messageData.text;
+      message = replaceEmotesInMessage(messageData.text, messageData.emotes);
     } else if (platform === 'youtube') {
       sender = messageData.displayName || messageData.nick;
       message = messageData.text || messageData.snippet?.textMessageDetails?.messageText || '';
     }
 
-    showChatPopup(sender, message, badges); // Funktion muss separat definiert sein
+    if (!message.startsWith('!')) {
+  showChatPopup(sender, message, badges);
+}
     return;
   }
 
@@ -342,6 +396,22 @@ window.addEventListener('onEventReceived', function (obj) {
 
   addNotification(type, title, message);
 });
+
+function replaceEmotesInMessage(text, emotes) {
+  if (!emotes || !Array.isArray(emotes)) return text;
+
+  emotes.forEach(emote => {
+    const img = `<img src="${emote.urls["1"]}" alt="${emote.name}" class="chat-emote" style="height: 20px; vertical-align: middle;">`;
+    const regex = new RegExp(`\\b${escapeRegExp(emote.name)}\\b`, 'g');
+    text = text.replace(regex, img);
+  });
+
+  return text;
+}
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 function capitalizeFirst(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
