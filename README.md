@@ -110,11 +110,11 @@ Boxhandschuhe, iPhone, Team1, Team2
 
 ## 🧑‍🔧 Installation Streamelements
 
-1. first of all, create 2 stream elements overlays, we need one for the main content and another for the Moblin source. If you use the standard moblin overlays or even another tool for recording, you can ignore this step.
-2. insert the individual sources as separate widgets within the overlay. Make sure that for widgets where *.json elements are present, API keys from Openweather or RTIRL.com may be necessary.
-3. create the various counters in Streamelements itself. A list of the standard counters can be seen above. If you use the inventory, you can of course also add your own items. please note that the items must be created both in the inventory and in the notifications.
-4. if you have decided to use the Moblin overlay, please note that it must be configured in the same width as the widget, i.e. usually 1920x1080p.
-5. go out into the world and show what you can do
+1. First of all, create 2 stream elements overlays, we need one for the main content and another for the Moblin source. If you use the standard moblin overlays or even another tool for recording, you can ignore this step.
+2. Insert the individual sources as separate widgets within the overlay. Make sure that for widgets where *.json elements are present, API keys from Openweather or RTIRL.com may be necessary.
+3. Create the various counters in Streamelements itself. A list of the standard counters can be seen above. If you use the inventory, you can of course also add your own items. please note that the items must be created both in the inventory and in the notifications.
+4. If you have decided to use the Moblin overlay, please note that it must be configured in the same width as the widget, i.e. usually 1920x1080p.
+5. Go out into the world and show what you can do. <3
 
 ---
 
