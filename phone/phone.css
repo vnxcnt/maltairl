@@ -66,7 +66,34 @@
     font-size: 14px;
     color: white;
     font-family: 'SF Pro Display', sans-serif; /* Optional, um den Text wie auf einem iPhone aussehen zu lassen */
+    top: -6px;
+    position: relative;
     z-index: 4; /* Statusbar bekommt den höchsten z-index */
+}
+
+.status-left {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  //transform: translateX(-20px); /* Feintuning */
+}
+
+.status-right img.status-icon {
+  height: 14px;
+  width: auto;
+  margin-left: 6px;
+}
+
+.gps-icon {
+  height: 14px;
+  width: auto;
+  display: inline-block;
 }
 
 #current-time {
@@ -152,6 +179,11 @@
   margin-right: 4px;
   vertical-align: middle;
   border-radius: 3px;
+}
+
+.chat-emote {
+  height: 20px;
+  margin: 0 2px;
 }
 
 .chat-popup.show {
