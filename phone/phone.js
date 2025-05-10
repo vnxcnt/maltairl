@@ -119,6 +119,11 @@ try {
   } catch (e) {
     console.warn('❌ Fehler beim Initialisieren der Social Stats:', e);
   }
+
+  document.getElementById('dock-app-1').src = 'https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/icon_twitch.webp';
+document.getElementById('dock-app-2').src = 'https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/icon_youtube.webp';
+document.getElementById('dock-app-3').src = 'https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/icon_se.webp';
+document.getElementById('dock-app-4').src = 'https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/icon_moblin.webp';
 });
 
 function fetchWeather(apiKey, city, unit) {
