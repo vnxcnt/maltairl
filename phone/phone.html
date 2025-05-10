@@ -4,9 +4,18 @@
     <div class="background-layer" id="phone-background"></div> <!-- Hintergrundbild -->
     <div class="phone-layer"></div> <!-- iPhone-Mockup-Bild -->
     <div class="screen">
-        <div class="status-bar">
-            <span id="current-time">12:45</span> <!-- Platzhalter für Uhrzeit -->
-        </div>
+<div class="status-bar">
+  <div class="status-left">
+    <span id="current-time">00:00</span>
+    <img src="https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/phone_gpsarrow.png" alt="GPS" class="gps-icon" id="gps-icon" />
+  </div>
+  <!-- optional andere Seite für WLAN, Akku etc. -->
+<div class="status-right">
+  <img src="https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/phone_wifi.png" alt="WiFi" class="status-icon" />
+  <img src="https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/phone_bluetooth.png" alt="Bluetooth" class="status-icon" id="bluetooth-icon" />
+  <img src="https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/phone_battery.png" alt="Battery" class="status-icon" />
+</div>
+</div>
         <div class="content">
           <div id="chat-popup" class="chat-popup hidden"></div>
              <!-- Dynamische Events werden hier angezeigt -->
