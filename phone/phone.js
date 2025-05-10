@@ -318,7 +318,7 @@ window.addEventListener('onEventReceived', function (obj) {
 
     if (platform === 'twitch') {
       sender = messageData.displayName || messageData.nick;
-      message = replaceEmotesInMessage(messageData.text, messageData.emotes);
+      message = parseEmotes(messageData.text, messageData.emotes);
     } else if (platform === 'youtube') {
       sender = messageData.displayName || messageData.nick;
       message = messageData.text || messageData.snippet?.textMessageDetails?.messageText || '';
@@ -396,6 +396,51 @@ window.addEventListener('onEventReceived', function (obj) {
 
   addNotification(type, title, message);
 });
+
+function parseEmotes(text, emotes) {
+  if (!emotes || !Array.isArray(emotes) || emotes.length === 0) return escapeHTML(text);
+
+  // Positionen sammeln
+  const emoteReplacements = [];
+
+  emotes.forEach(emote => {
+    const name = emote.name;
+    const id = emote.id;
+    const url = emote.urls?.["1"] || emote.urls?.["2"] || emote.urls?.["4"];
+    if (!url || !name) return;
+
+    let idx = -1;
+    while ((idx = text.indexOf(name, idx + 1)) !== -1) {
+      emoteReplacements.push({
+        start: idx,
+        end: idx + name.length,
+        img: `<img src="${url}" alt="${name}" class="chat-emote" style="height: 20px; vertical-align: middle;">`
+      });
+    }
+  });
+
+  // Sortiere nach Position (wichtig!)
+  emoteReplacements.sort((a, b) => a.start - b.start);
+
+  // Füge HTML korrekt ein
+  let result = '';
+  let lastIndex = 0;
+  emoteReplacements.forEach(rep => {
+    result += escapeHTML(text.slice(lastIndex, rep.start));
+    result += rep.img;
+    lastIndex = rep.end;
+  });
+  result += escapeHTML(text.slice(lastIndex));
+
+  return result;
+}
+
+// Sicherheitsfunktion, falls Text HTML enthält
+function escapeHTML(str) {
+  return str.replace(/[&<>"']/g, match => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+  }[match]));
+}
 
 function replaceEmotesInMessage(text, emotes) {
   if (!emotes || !Array.isArray(emotes)) return text;
