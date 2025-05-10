@@ -1,0 +1,40 @@
+ body {
+    margin: 0;
+    font-family: sans-serif;
+    color: #fff;
+  }
+
+  #info-widget {
+    max-width: 320px;
+    margin: auto;
+    padding: 10px 8px;
+  }
+
+  .panel-title {
+    font-size: 16px;
+    margin-bottom: 8px;
+    text-align: center;
+    color: #ffffff;
+  }
+
+  .status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .status-entry {
+    font-size: 13px;
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+  }
+
+  .status-value {
+    font-weight: bold;
+    padding-left: 6px;
+  }
+
+  .red { color: #f44336; }
+  .green { color: #4caf50; }
+  .blue { color: #2196f3; }
