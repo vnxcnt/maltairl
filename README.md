@@ -1,133 +1,120 @@
-StreamElements Overlay Suite for IRL Streaming
+# StreamElements Overlay Suite for IRL & Roleplay Streaming
 
-This repository contains a modular set of StreamElements Widgets and Overlay Extensions designed for immersive livestreaming experiences, especially IRL and GTA-style roleplay. The system is built using HTML/CSS/JS and utilizes StreamElements counters, fieldData inputs, and SE_API for full control without requiring OAuth.
+This repository contains a modular set of **StreamElements Widgets** and **Overlay Extensions** designed for immersive livestreaming experiences, especially IRL and GTA-style roleplay. The system is built using **HTML**, **CSS**, and **JavaScript**, and utilizes **StreamElements counters**, `fieldData` inputs, and `SE_API` for full control — without requiring OAuth.
 
-🔧 Features Overview
+---
 
-🎛️ Control & Debug Panel
+## 🔧 Features Overview
 
-Full counter overview categorized by purpose (Overlay, Inventory, Misc)
+### 🎛️ Control & Debug Panel
 
-Toggle buttons and +1/-1 adjusters for each counter
+* Categorized counter viewer (Overlay, Inventory, Misc)
+* Toggle & increment buttons for each counter
+* Realtime log panel via `onEventReceived`
 
-Live event log viewer (via onEventReceived)
+### 📱 Smartphone HUD (GTA-style)
 
-📱 Smartphone HUD (GTA-style)
+* iPhone-style interface with dynamic backgrounds
+* Live weather display (OpenWeatherMap API)
+* Synchronized system clock
+* Modes: hidden, minimized, fullscreen (controlled via `Phone` counter)
+* Latest follower, sub, donation stats
+* Platform-independent chat notifications (Twitch, YouTube)
+* GPS icon toggled by `Map` counter
+* Bluetooth icon toggled by `Watch` counter
+* Animated popups and timer bars for alerts
+* Bottom dock with customizable app icons
 
-iPhone mockup with customizable backgrounds
+### ⌚ Apple Watch Mini-Widget
 
-Live weather data via OpenWeatherMap API
+* Embedded black display in Apple Watch mockup
+* Live metrics: speed, heading, altitude (via RTIRL JSON)
+* Visibility toggled via `Watch` counter
 
-Real-time clock with precise syncing
+### 🗺️ GTA-Style Mini-Map Widget
 
-Phone display modes: hidden, minimized, full (controlled via Phone counter)
+* Leaflet map styled with Mapbox (custom or fallback)
+* White GTA-style dot marker
+* Follows location via RTIRL API
+* Health/Stamina/Armor bars beneath map
+* Slide-in/out animation, toggled via `Map` counter
 
-Social stats: last follower, sub, donation
+### 📍 Location Widget
 
-Event-based chat popup for all platforms (Twitch/YouTube)
+* Reverse geocoded location name (Mapbox)
+* Font: *Dancing Script*, animated fade
+* Visibility also tied to `Map` counter
 
-GPS icon toggle based on Map counter
+### 🌐 Event Feed (Moblin Style)
 
-Bluetooth icon toggle based on Watch counter
+* Vertical event log (follow, sub, cheer, etc.)
+* Color-coded by event type
+* Transparent and mobile-optimized
 
-Notification system with styled bars and animations
+### 💬 Chat Panel
 
-Dock with 4 app icons (customizable PNGs)
+* Twitch & YouTube messages combined
+* Full Twitch emote rendering
+* Platform icon + name + message
+* Mods highlighted distinctly
+* Commands (starting with `!`) are ignored
 
-⌚ Apple Watch Mini-Widget
+---
 
-Black display surface embedded in mockup
+## 🧠 Tech Notes
 
-Live stats shown dynamically from JSON (speed, heading, altitude)
+* `onWidgetLoad` initializes all states from `SE_API`
+* `onEventReceived` handles real-time updates
+* All counters controlled **without** OAuth (via StreamElements counters only)
+* Optimized for use as OBS browser sources
 
-Controlled visibility via Watch counter
+---
 
-🗺️ GTA-Style Mini-Map Widget
+## 📁 Directory Structure
 
-Leaflet-based map using Mapbox custom style or fallback
+```
+/images/     → HUD icons, overlays, backgrounds (hosted via GitHub CDN)
+/widgets/    → Widget modules (phone, map, chat, etc.)
+```
 
-White GTA-style GPS marker
+---
 
-Map follows user’s location (RTIRL API)
+## 🚀 Deployment Steps
 
-Map + 3 status bars (health, stamina, armor)
+1. Create or edit an overlay at [streamelements.com](https://streamelements.com/)
+2. Add a **Custom Widget** to your overlay
+3. Paste your HTML, CSS & JS in their respective tabs
+4. Optionally define `fieldData` values for API tokens, settings, etc.
+5. Save and position the widget in your OBS scene
 
-Slide-in effect from left, toggled via Map counter
+---
 
-📍 Location Widget
+## 📌 Counters Used
 
-Displays current location name (reverse geocoded via Mapbox)
-
-Font: Dancing Script
-
-Fades in/out based on Map counter
-
-🌐 Event Feed (Moblin)
-
-Transparent log of the latest stream events
-
-Auto-colored entries based on event type (follow, sub, cheer, tip, raid)
-
-Responsive and readable on mobile
-
-💬 Live Chat Panel
-
-Unified Twitch & YouTube message rendering
-
-Emotes fully rendered (Twitch CDN)
-
-Sender name + badge + platform icon
-
-Messages from moderators are highlighted
-
-Messages starting with ! are ignored
-
-🧠 Tech Notes
-
-Emote parsing avoids raw emote text rendering
-
-All widgets use onWidgetLoad to initialize state via SE_API.counters.get
-
-Dynamic updates via onEventReceived
-
-All counters handled without OAuth using internal StreamElements logic
-
-Overlay is compatible with OBS browser source
-
-📁 Structure
-
-/images/ – all HUD assets, icons, mockups (hosted via GitHub CDN)
-
-/widgets/ – modular widget folders (phone, watch, map, chat, control, etc.)
-
-🚀 Deployment
-
-Create overlays in streamelements.com
-
-Add a Custom Widget
-
-Paste the full HTML/CSS/JS code into the widget editor
-
-Use FieldData to define tokens and configurable values
-
-Position widgets freely in the OBS scene
-
-📌 Counters Used
-
+```
 Phone, PhoneBackground, Watch, Map, Scoreboard, Inventory,
 Stars, Equipment, Cola, Wasserflasche, Rucksack, Bilal,
 Boxhandschuhe, iPhone, Team1, Team2
+```
 
-💡 Example Use Cases
+---
 
-Stream IRL city walks with GTA-style map and phone
+## 💡 Use Cases
 
-Manage roleplay HUD elements visually
+* GTA-style IRL HUD for walking streams
+* Twitch/YouTube hybrid overlays for mobile streamers
+* Inventory toggles & map visibility during RP
+* Minimal control dashboard to change stream state without chat spam
 
-Control inventory and triggers via panel interface
+---
 
-Use mobile chat viewer while streaming on the go
+## 📬 Contact
 
-📬 Contact
+**Author**: @vnxcnt
+Feel free to open issues or fork to extend.
 
-Created by @vnxcnt – Feel free to open issues or reach out on GitHub if you want to contribute or extend the widget suite.
+---
+
+## 📝 License
+
+**MIT** — use freely, contribute openly.
