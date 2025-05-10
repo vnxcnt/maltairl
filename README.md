@@ -2,6 +2,8 @@
 
 This repository contains a modular set of **StreamElements Widgets** and **Overlay Extensions** designed for immersive livestreaming experiences, especially IRL and GTA-style roleplay. The system is built using **HTML**, **CSS**, and **JavaScript**, and utilizes **StreamElements counters**, `fieldData` inputs, and `SE_API` for full control — without requiring OAuth.
 
+![Overlay Preview](https://raw.githubusercontent.com/vnxcnt/maltairl/refs/heads/main/images/main.png)
+
 ---
 
 ## 🔧 Features Overview
